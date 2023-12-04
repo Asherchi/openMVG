@@ -41,6 +41,7 @@ using namespace openMVG::image;
 using namespace openMVG::features;
 using namespace openMVG::sfm;
 
+// what is this used for? 
 features::EDESCRIBER_PRESET stringToEnum(const std::string & sPreset)
 {
   features::EDESCRIBER_PRESET preset;
@@ -66,7 +67,7 @@ int main(int argc, char **argv)
   std::string sSfM_Data_Filename;
   std::string sOutDir = "";
   bool bUpRight = false;
-  std::string sImage_Describer_Method = "SIFT";
+  std::string sImage_Describer_Method = "SIFT";  // what's else method use for compute sift  
   bool bForce = false;
   std::string sFeaturePreset = "";
 #ifdef OPENMVG_USE_OPENMP
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
   cmd.add( make_option('i', sSfM_Data_Filename, "input_file") );
   cmd.add( make_option('o', sOutDir, "outdir") );
   // Optional
-  cmd.add( make_option('m', sImage_Describer_Method, "describerMethod") );
+  cmd.add( make_option('m', sImage_Describer_Method, "describerMethod") ); // default method is sift 
   cmd.add( make_option('u', bUpRight, "upright") );
   cmd.add( make_option('f', bForce, "force") );
   cmd.add( make_option('p', sFeaturePreset, "describerPreset") );
