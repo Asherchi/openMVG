@@ -7,6 +7,7 @@
         "functional": "cpp",
         "regex": "cpp",
         "xhash": "cpp",
-        "orderingmethods": "cpp"
+        "orderingmethods": "cpp",
+        "random": "cpp"
     }
 }

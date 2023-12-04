@@ -1,0 +1,17 @@
+
+
+openMVG_main_SfMInit_ImageListing  
+源码位于： src\software\SfM\main_SfMInit_ImageListing.cpp
+功能：
+1、主要用于获取相机的参数信息
+2、名字 内参 宽高等 sfm_data.json里面存有对应的信息
+
+输入参数：
+-k "f;0;ppx;0;f;ppy;0;0;1" // 相机的焦距 cx cy 
+-g  1  // 可以设置是否使用相机组作为参数，使用相机组的话可以更好的BA
+-P   // 使用位置先验信息
+-W   "1.0;1.0;1.0" // 可以设置对应xyz的先验信息 如果不需要优化z的话 那么可以z的对应的权重为0 
+-m 1 // gps转换为ecef还是 utm格式  0是ecef的格式 1 是 utm格式
+
+
+
