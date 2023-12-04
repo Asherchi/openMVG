@@ -229,7 +229,7 @@ public:
 
 private:
   Params _params;
-  bool _bOrientation;  // 这个方向是什么的方向？
+  bool _bOrientation;  // 这个方向是什么的方向？描述子的方向
 };
 
 } // namespace features

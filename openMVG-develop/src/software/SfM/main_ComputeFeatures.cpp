@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   cmd.add( make_option('f', bForce, "force") );
   cmd.add( make_option('p', sFeaturePreset, "describerPreset") );
 
-#ifdef OPENMVG_USE_OPENMP
+#ifdef OPENMVG_USE_OPENMP  // https://zh.wikipedia.org/zh-cn/OpenMP 多线程并发的编程API
   cmd.add( make_option('n', iNumThreads, "numThreads") );
 #endif
 
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
   //---------------------------------------
   // a. Load input scene
   //---------------------------------------
-  SfM_Data sfm_data;
+  SfM_Data sfm_data;  // 这个是第一步计算得到的SfM data 
   if (!Load(sfm_data, sSfM_Data_Filename, ESfM_Data(VIEWS|INTRINSICS))) {
     OPENMVG_LOG_ERROR
       << "The input file \""<< sSfM_Data_Filename << "\" cannot be read";
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
       }
     }
 
-    // Export the used Image_describer and region type for:
+    // Export the used Image_describer and region type for:  // 如果是以及计算过描述子 那么直接加载对应的数据
     // - dynamic future regions computation and/or loading
     {
       std::ofstream stream(sImage_describer.c_str());
@@ -322,13 +322,16 @@ int main(int argc, char **argv)
               preemptive_exit = true;
               continue;
             }
-            // Use the global mask only if it fits the current image size
+            // Use the global mask only if it fits the current image size  又是一个保护 只有当mask数据和图像数据的size一致的时候才会使用mask
             if (imageMask.Width() == imageGray.Width() && imageMask.Height() == imageGray.Height())
-              mask = &imageMask;
+              mask = &imageMask;  // 这样有一个可能是在mask的边缘也被提取到特征
           }
         }
 
         // Compute features and descriptors and export them to files
+        // 计算特征和描述子并输出到对应的文件 
+        // 如果执行的是sift的提取方式的话 那么实际执行的应该是如下的数据：
+        // src\nonFree\sift\SIFT_describer.hpp 126行
         auto regions = image_describer->Describe(imageGray, mask);
         if (regions && !image_describer->Save(regions.get(), sFeat, sDesc)) {
           OPENMVG_LOG_ERROR

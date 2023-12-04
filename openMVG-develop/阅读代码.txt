@@ -15,3 +15,20 @@ openMVG_main_SfMInit_ImageListing
 
 
 
+openMVG_main_ComputeFeatures
+源码位于： src\software\SfM\main_ComputeFeatures.cpp
+功能： 
+1、计算图像的特征
+
+输入参数：
+-i  // 输入路径
+-o  // 输出路径
+-m  "SIFT" // 提取描述子的方法
+-u 0 // 是否采用描述子的方向参数 0是采用特征描述子的方向
+-f 0 // 是否读取之前生成的文件  0是读取原来计算得到的描述子文件
+-p 这个暂时不清楚 
+
+
+
+
+

@@ -8,6 +8,18 @@
         "regex": "cpp",
         "xhash": "cpp",
         "orderingmethods": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "array": "cpp",
+        "future": "cpp",
+        "istream": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "variant": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xutility": "cpp"
     }
 }
