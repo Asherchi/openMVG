@@ -21,8 +21,8 @@
  */
 enum EPairMode
 {
-  PAIR_EXHAUSTIVE = 0, // Build every combination of image pairs
-  PAIR_CONTIGUOUS = 1  // Only consecutive image pairs (useful for video mode)
+  PAIR_EXHAUSTIVE = 0, // Build every combination of image pairs  暴力匹配
+  PAIR_CONTIGUOUS = 1  // Only consecutive image pairs (useful for video mode) 视频模式 连续的图像对
 };
 
 using namespace openMVG;
@@ -128,15 +128,15 @@ int main( int argc, char** argv )
 
   // 2. Compute pairs
   std::cout << "Computing pairs." << std::endl;
-  Pair_Set pairs;
-  switch ( pairMode )
+  Pair_Set pairs;  // pair就是一个 std::pair<IndexT, IndexT>;  IndexT是无符号整形
+  switch ( pairMode ) 
   {
     case PAIR_EXHAUSTIVE:
     {
       pairs = exhaustivePairs( NImage );
       break;
     }
-    case PAIR_CONTIGUOUS:
+    case PAIR_CONTIGUOUS:  // 如果是连续匹配的模式的话 就是需要根据 iContiguousCount 设定匹配对的值
     {
       pairs = contiguousWithOverlap( NImage, iContiguousCount );
       break;

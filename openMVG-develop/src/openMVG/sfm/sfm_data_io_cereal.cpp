@@ -116,7 +116,7 @@ bool Load_Cereal(
       {
         archive(cereal::make_nvp("views", data.views));
       }
-      else // sfm_data version is < to v0.3 => Previous to OpenMVG v1.1
+      else // sfm_data version is < to v0.3 => Previous to OpenMVG v1.1  //// 这个是对之前的代码的兼容
       {
         // It means that it use the View that does not support inheritance
         using Views_v1 = Hash_Map<IndexT, std::shared_ptr<View_version_1>>;

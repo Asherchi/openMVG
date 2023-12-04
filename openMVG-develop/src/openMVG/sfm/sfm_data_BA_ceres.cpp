@@ -192,6 +192,7 @@ bool Bundle_Adjustment_Ceres::Adjust
       for (const auto & view_it : sfm_data.GetViews())
       {
         const sfm::ViewPriors * prior = dynamic_cast<sfm::ViewPriors*>(view_it.second.get());
+        // 如果数据存在 那么获取对应的sfm的center 和 GPS的center
         if (prior != nullptr && prior->b_use_pose_center_ && sfm_data.IsPoseAndIntrinsicDefined(prior))
         {
           X_SfM.push_back( sfm_data.GetPoses().at(prior->id_pose).center() );
@@ -219,7 +220,7 @@ bool Bundle_Adjustment_Ceres::Adjust
           }
           Vec residual = (Eigen::Map<Mat3X>(X_SfM[0].data(), 3, X_SfM.size()) - Eigen::Map<Mat3X>(X_GPS[0].data(), 3, X_GPS.size())).colwise().norm();
           std::sort(residual.data(), residual.data() + residual.size());
-          pose_center_robust_fitting_error = residual(residual.size()/2);
+          pose_center_robust_fitting_error = residual(residual.size()/2);  // 这个误差等于所有误差的中位数 
 
           // Apply the found transformation to the SfM Data Scene
           openMVG::sfm::ApplySimilarity(sim, sfm_data);
@@ -259,6 +260,7 @@ bool Bundle_Adjustment_Ceres::Adjust
   Hash_Map<IndexT, std::vector<double>> map_poses;
 
   // Setup Poses data & subparametrization
+  // 处理相机的外参问题
   for (const auto & pose_it : sfm_data.poses)
   {
     const IndexT indexPose = pose_it.first;
@@ -277,17 +279,20 @@ bool Bundle_Adjustment_Ceres::Adjust
     if (options.extrinsics_opt == Extrinsic_Parameter_Type::NONE)
     {
       // set the whole parameter block as constant for best performance
+
       problem.SetParameterBlockConstant(parameter_block);
     }
     else  // Subset parametrization
     {
       std::vector<int> vec_constant_extrinsic;
       // If we adjust only the translation, we must set ROTATION as constant
+      // 如果只调整平移 那么旋转设为常数
       if (options.extrinsics_opt == Extrinsic_Parameter_Type::ADJUST_TRANSLATION)
       {
         // Subset rotation parametrization
         vec_constant_extrinsic.insert(vec_constant_extrinsic.end(), {0,1,2});
       }
+      // 如果只调整旋转 那么设置平移为常数
       // If we adjust only the rotation, we must set TRANSLATION as constant
       if (options.extrinsics_opt == Extrinsic_Parameter_Type::ADJUST_ROTATION)
       {
@@ -309,11 +314,12 @@ bool Bundle_Adjustment_Ceres::Adjust
   }
 
   // Setup Intrinsics data & subparametrization
+  // 处理相机的内参问题
   for (const auto & intrinsic_it : sfm_data.intrinsics)
   {
     const IndexT indexCam = intrinsic_it.first;
 
-    if (isValid(intrinsic_it.second->getType()))
+    if (isValid(intrinsic_it.second->getType())) // 检验相机是否有效
     {
       map_intrinsics[indexCam] = intrinsic_it.second->getParams();
       if (!map_intrinsics.at(indexCam).empty())
@@ -355,6 +361,7 @@ bool Bundle_Adjustment_Ceres::Adjust
   // For all visibility add reprojections errors:
   for (auto & structure_landmark_it : sfm_data.structure)
   {
+    // 一个3D landmark对应多个 2D观测值 obs 
     const Observations & obs = structure_landmark_it.second.obs;
 
     for (const auto & obs_it : obs)
@@ -397,6 +404,7 @@ bool Bundle_Adjustment_Ceres::Adjust
       problem.SetParameterBlockConstant(structure_landmark_it.second.X.data());
   }
 
+  // 如果使用控制点 添加对应的代价函数
   if (options.control_point_opt.bUse_control_points)
   {
     // Use Ground Control Point:
@@ -417,7 +425,7 @@ bool Bundle_Adjustment_Ceres::Adjust
           IntrinsicsToCostFunction(
             sfm_data.intrinsics.at(view->id_intrinsic).get(),
             obs_it.second.x,
-            options.control_point_opt.weight);
+            options.control_point_opt.weight);  // 对应控制点的权重
 
         if (cost_function)
         {
@@ -452,7 +460,8 @@ bool Bundle_Adjustment_Ceres::Adjust
     }
   }
 
-  // Add Pose prior constraints if any
+  // Add Pose prior constraints if any 
+  // 如果使用GPS先验的话可以添加到这个位置
   if (b_usable_prior)
   {
     for (const auto & view_it : sfm_data.GetViews())
@@ -497,7 +506,10 @@ bool Bundle_Adjustment_Ceres::Adjust
 
   // Solve BA
   ceres::Solver::Summary summary;
-  // 执行BA
+  // 执行BA  上面那么多 最后执行就这一句话 
+  /*
+    执行BA
+  */
   ceres::Solve(ceres_config_options, &problem, &summary);
   if (ceres_options_.bCeres_summary_)
     OPENMVG_LOG_INFO << summary.FullReport();
@@ -551,8 +563,9 @@ bool Bundle_Adjustment_Ceres::Adjust
             pose.center() = C_refined;
         }
         else
-        {
-            // Update rotation + translation
+        {   
+            // 正常来说 更新 旋转和平移就是下面的数据
+            // Update rotation + translation  下面的形式这样 猜测是因为 world to camera 
             pose = Pose3(R_refined, -R_refined.transpose() * t_refined);
         }
       }
@@ -581,7 +594,7 @@ bool Bundle_Adjustment_Ceres::Adjust
       // - Compute some fitting statistics
       //--
 
-      // Collect corresponding camera centers  乍一看这个是啥，想起来原来是C++
+      // Collect corresponding camera centers  乍一看这个是啥
       std::vector<Vec3> X_SfM, X_GPS;
       for (const auto & view_it : sfm_data.GetViews())
       {

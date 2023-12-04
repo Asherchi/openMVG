@@ -22,6 +22,7 @@
 namespace openMVG {
 
 /// Generate all the (I,J) pairs of the upper diagonal of the NxN matrix
+/// 暴力匹配就是两两之间直接设定一个匹配对 还挺简单的
 inline Pair_Set exhaustivePairs(const size_t N)
 {
   Pair_Set pairs;
@@ -34,6 +35,7 @@ inline Pair_Set exhaustivePairs(const size_t N)
 
 /// Generate the pairs that have a distance inferior to the overlapSize
 /// Usable to match video sequence
+/// 这个也很简单 就是直接设定一个阈值 不准超过这个阈值就是连续匹配的方式
 inline Pair_Set contiguousWithOverlap(const size_t N, const size_t overlapSize)
 {
   Pair_Set pairs;

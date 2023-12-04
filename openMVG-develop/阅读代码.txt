@@ -31,4 +31,73 @@ openMVG_main_ComputeFeatures
 
 
 
+openMVG_main_PairGenerator
+源码位于：src\software\SfM\main_PairGenerator.cpp
+功能： 
+1、计算图像之间的两两匹配对，主要是两种方式：
+    1、暴力匹配
+    2、顺序匹配
 
+输入参数：
+-i //输入路径
+-o //输出路径
+-m "EXHAUSTIVE" // 生成pair的模式  "EXHAUSTIVE"是暴力匹配  "CONTIGUOUS"是连续匹配
+-c  // 连续链接的数量 这个是在连续匹配的时候才会有效
+
+
+
+openMVG_main_ComputeMatches
+源码位于：src\software\SfM\main_ComputeMatches.cpp
+功能：
+1、对提取的特征和描述子进行匹配
+
+
+输入参数：
+-i // 输入路径
+-o // 输出路径
+-p // 预定义的匹配对列表，也就是上一步的输出
+-r // flann的距离阈值 设定的越小越严格 默认是 0.85
+-n // 最近邻匹配的方法
+-f // 强制去重新计算数据
+-c // cache的size
+-P // 用于抢占匹配的特征数量
+
+
+
+openMVG_main_GeometricFilter
+源码位于：src\software\SfM\main_GeometricFilter.cpp
+功能：
+1、对上一步输出的匹配得到的特征和匹配做一下几何校验过滤，默认的方式是基础矩阵 F
+
+输入参数：
+-i // 输入路径
+-o // 输出路径
+-m // 上一步得到的匹配的路径，也就是未过滤的路径
+-p // 输入的pair 未知
+-s // 输出的pair 未知
+-g // 采用几何验证的模式  默认是 f: fundamenta matrix 
+
+
+
+openMVG_main_SfM
+源码位于：src\software\SfM\main_SfM.cpp
+功能：
+1、 
+
+输入参数：
+-i // 输入路径
+-m // 匹配文件夹路径
+-M // 匹配的文件
+-o // 输出路径
+-s // 可以为如下形式 INCREMENTAL 增量式 GLOBAL 全局式
+
+-f // 优化内参配置
+-e // 优化外参配置
+-P // 使用先验信息 GPS 
+
+// 增量式sfm的选项：
+-t // 三角化的方法
+-r // resection的方法 前方交会的方法
+-c // 相机模型
+
+还有一些：自己看吧

@@ -352,16 +352,22 @@ void RotationMatrixToQuaternion(
 // or to Pi. The following implementation detects when these two cases
 // occurs and deals with them by taking code paths that are guaranteed
 // to not perform division by a small number.
+/* 
+当旋转角度接近于零或接近Pi时，旋转矩阵到角度轴形式的转换在数值上是有问题的。
+ 以下实现检测这两种情况何时发生，并通过采用保证不执行小数除法的代码路径来处理它们。
+*/
 template <typename T>
 inline void RotationMatrixToAngleAxis(const T* R, T* angle_axis) {
   RotationMatrixToAngleAxis(ColumnMajorAdapter3x3(R), angle_axis);
 }
 
+// https://blog.csdn.net/YiYeZhiNian/article/details/106750302
 template <typename T, int row_stride, int col_stride>
 void RotationMatrixToAngleAxis(
     const MatrixAdapter<const T, row_stride, col_stride>& R,
     T* angle_axis) {
   T quaternion[4];
+  // 旋转矩阵到四元素 四元素再到轴角
   RotationMatrixToQuaternion(R, quaternion);
   QuaternionToAngleAxis(quaternion, angle_axis);
   return;

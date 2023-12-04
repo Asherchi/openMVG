@@ -122,7 +122,7 @@ bool computeIndexFromImageNames(
   const std::pair<std::string,std::string>& initialPairName,
   Pair& initialPairIndex)
 {
-  if (initialPairName.first == initialPairName.second)
+  if (initialPairName.first == initialPairName.second)  // 说明自己跟自己匹配
   {
     OPENMVG_LOG_ERROR << "Invalid image names. You cannot use the same image to initialize a pair.";
     return false;
@@ -166,20 +166,20 @@ int main(int argc, char **argv)
       directory_match,
       filename_match,
       directory_output,
-      engine_name = "INCREMENTAL";
+      engine_name = "INCREMENTAL"; // 默认是增量式重建
 
   // Bundle adjustment options:
   std::string sIntrinsic_refinement_options = "ADJUST_ALL";
   std::string sExtrinsic_refinement_options = "ADJUST_ALL";
-  bool b_use_motion_priors = false;
+  bool b_use_motion_priors = false;  // 这个motion先验是什么？是GPS吗? 可以是
 
   // Incremental SfM options
-  int triangulation_method = static_cast<int>(ETriangulationMethod::DEFAULT);
-  int resection_method  = static_cast<int>(resection::SolverType::DEFAULT);
+  int triangulation_method = static_cast<int>(ETriangulationMethod::DEFAULT);  // 默认方法是可以深度加权中点
+  int resection_method  = static_cast<int>(resection::SolverType::DEFAULT);  // 默认方法是 P3P_NORDBERG_ECCV18
   int user_camera_model = PINHOLE_CAMERA_RADIAL3;
 
   // SfM v1
-  std::pair<std::string,std::string> initial_pair_string("","");
+  std::pair<std::string,std::string> initial_pair_string("","");   // 这种方式可以给定用于初始三角话的两张图像
 
   // SfM v2
   std::string sfm_initializer_method = "STELLAR";
@@ -406,17 +406,17 @@ int main(int argc, char **argv)
 
   // SfM related
 
-  // Load input SfM_Data scene
+  // Load input SfM_Data scene 加载sfm的数据
   SfM_Data sfm_data;
   const ESfM_Data sfm_data_loading_etypes =
       scene_initializer_enum == ESfMSceneInitializer::INITIALIZE_EXISTING_POSES ?
-        ESfM_Data(VIEWS|INTRINSICS|EXTRINSICS) : ESfM_Data(VIEWS|INTRINSICS);
+        ESfM_Data(VIEWS|INTRINSICS|EXTRINSICS) : ESfM_Data(VIEWS|INTRINSICS);  // ESfM_Data(VIEWS|INTRINSICS) 应该是这个
   if (!Load(sfm_data, filename_sfm_data, sfm_data_loading_etypes)) {
     OPENMVG_LOG_ERROR << "The input SfM_Data file \""<< filename_sfm_data << "\" cannot be read.";
     return EXIT_FAILURE;
   }
 
-  if (!stlplus::folder_exists(directory_output))
+  if (!stlplus::folder_exists(directory_output))  // 不存在输出的文件就创建一个对应的文件输出
   {
     if (!stlplus::folder_create(directory_output))
     {
@@ -426,7 +426,7 @@ int main(int argc, char **argv)
   }
 
   //
-  // Match and features
+  // Match and features  匹配和特征的文件夹
   //
   if (directory_match.empty() && !filename_match.empty() && stlplus::file_exists(filename_match))
   {
@@ -444,13 +444,13 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  // Features reading
+  // Features reading  读取对应的特征
   std::shared_ptr<Features_Provider> feats_provider = std::make_shared<Features_Provider>();
   if (!feats_provider->load(sfm_data, directory_match, regions_type)) {
     OPENMVG_LOG_ERROR << "Cannot load view corresponding features in directory: " << directory_match << ".";
     return EXIT_FAILURE;
   }
-  // Matches reading
+  // Matches reading  读取对应的匹配
   std::shared_ptr<Matches_Provider> matches_provider = std::make_shared<Matches_Provider>();
   if // Try to read the provided match filename or the default one (matches.f.txt/bin)
   (
@@ -460,7 +460,7 @@ int main(int argc, char **argv)
       matches_provider->load(sfm_data, stlplus::create_filespec(directory_match, "matches.e.txt")) ||
       matches_provider->load(sfm_data, stlplus::create_filespec(directory_match, "matches.e.bin")))
       )
-  {
+  { // 我记得前面不止两张几何验证的模型啊 为什么这里只写了两张方式获取对应的匹配
     OPENMVG_LOG_ERROR << "Cannot load the match file.";
     return EXIT_FAILURE;
   }
@@ -509,14 +509,14 @@ int main(int argc, char **argv)
           directory_output,
           stlplus::create_filespec(directory_output, "Reconstruction_Report.html"));
 
-    // Configuration:
+    // Configuration:  配置特征和匹配
     engine->SetFeaturesProvider(feats_provider.get());
     engine->SetMatchesProvider(matches_provider.get());
 
-    // Configure reconstruction parameters
+    // Configure reconstruction parameters  # 配置相机模型 三角化方法 前方交会方法
     engine->SetUnknownCameraType(EINTRINSIC(user_camera_model));
-    engine->SetTriangulationMethod(static_cast<ETriangulationMethod>(triangulation_method));
-    engine->SetResectionMethod(static_cast<resection::SolverType>(resection_method));
+    engine->SetTriangulationMethod(static_cast<ETriangulationMethod>(triangulation_method)); // 默认方法是 可逆深度中点
+    engine->SetResectionMethod(static_cast<resection::SolverType>(resection_method));  // 默认方法是 p3p 
 
     // Handle Initial pair parameter
     if (!initial_pair_string.first.empty() && !initial_pair_string.second.empty())
@@ -555,7 +555,7 @@ int main(int argc, char **argv)
     sfm_engine.reset(engine);
   }
     break;
-  case ESfMEngine::GLOBAL:
+  case ESfMEngine::GLOBAL:  // 全局式 重建
   {
     GlobalSfMReconstructionEngine_RelativeMotions * engine =
         new GlobalSfMReconstructionEngine_RelativeMotions(
@@ -611,7 +611,7 @@ int main(int argc, char **argv)
 
   openMVG::system::Timer timer;
 
-  if (sfm_engine->Process())
+  if (sfm_engine->Process())  // 开始重建
   {
     OPENMVG_LOG_INFO << " Total Sfm took (s): " << timer.elapsed();
 

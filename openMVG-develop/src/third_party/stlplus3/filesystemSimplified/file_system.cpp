@@ -1019,8 +1019,8 @@ namespace stlplus
     // scan back through filename until a '.' is found and remove prefix;
     std::string::size_type i = fname.find_last_of('.');
     // observe Unix convention that a dot at the start of a filename is part of the name, not the extension;
-    if (i != 0 && i != std::string::npos)
-      fname.erase(0, i+1);
+    if (i != 0 && i != std::string::npos)  // 保存一个字典感觉会比较好 也就是一个view一个ext和filename   hhhh 没必要 因为只有一个文件
+      fname.erase(0, i+1);  // 加1是为了把.也去掉
     else
       fname.erase();
     return fname;

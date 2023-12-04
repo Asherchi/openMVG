@@ -68,6 +68,7 @@ bool ValidIds(const SfM_Data & sfm_data, ESfM_Data flags_part)
   return bRet;
 }
 
+// 默认flags part是view 和 内参
 bool Load(SfM_Data & sfm_data, const std::string & filename, ESfM_Data flags_part)
 {
   bool bStatus = false;
@@ -84,7 +85,7 @@ bool Load(SfM_Data & sfm_data, const std::string & filename, ESfM_Data flags_par
     return false;
   }
 
-  // Assert that loaded intrinsics | extrinsics are linked to valid view
+  // Assert that loaded intrinsics | extrinsics are linked to valid view  也就说这里必须的条件有 view 和 （内参|外参）
   if ( bStatus &&
     (flags_part & VIEWS) == VIEWS && (
     (flags_part & INTRINSICS) == INTRINSICS ||

@@ -104,8 +104,8 @@ bool SequentialSfMReconstructionEngine2::Process() {
     }
     else
     {
-      OPENMVG_LOG_INFO << "Initialization status : Success";
-      sfm_data_.poses = scene_initializer_->Get_sfm_data().GetPoses();
+      OPENMVG_LOG_INFO << "Initialization status : Success";  // 这个pose可能不是很好 一般情况下sfm_data的pose数据是没有的 
+      sfm_data_.poses = scene_initializer_->Get_sfm_data().GetPoses();  // 上面的pose是 RT
     }
 
     if (!InitTracksAndLandmarks())

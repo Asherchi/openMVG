@@ -45,7 +45,7 @@ int main( int argc, char** argv )
 
   std::string  sSfM_Data_Filename;
   std::string  sOutputMatchesFilename = "";
-  float        fDistRatio             = 0.8f;
+  float        fDistRatio             = 0.8f;   // 距离阈值 flann
   std::string  sPredefinedPairList    = "";
   std::string  sNearestMatchingMethod = "AUTO";
   bool         bForce                 = false;
@@ -151,12 +151,12 @@ int main( int argc, char** argv )
   const std::string sMatchesDirectory = stlplus::folder_part( sOutputMatchesFilename );
 
   //---------------------------------------
-  // Load SfM Scene regions
+  // Load SfM Scene regions 加载scene的数据
   //---------------------------------------
   // Init the regions_type from the image describer file (used for image regions extraction)
   using namespace openMVG::features;
   const std::string sImage_describer = stlplus::create_filespec(sMatchesDirectory, "image_describer", "json");
-  std::unique_ptr<Regions> regions_type = Init_region_type_from_file(sImage_describer);
+  std::unique_ptr<Regions> regions_type = Init_region_type_from_file(sImage_describer);  // regions_type默认是SIFT_Regions
   if (!regions_type)
   {
     OPENMVG_LOG_ERROR << "Invalid: " << sImage_describer << " regions type file.";

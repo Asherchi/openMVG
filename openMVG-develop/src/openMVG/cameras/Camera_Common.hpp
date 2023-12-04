@@ -72,6 +72,7 @@ static inline bool isSpherical( EINTRINSIC eintrinsic )
 */
 static inline bool isValid( EINTRINSIC eintrinsic )
 {
+  // 要求是针孔相机或 Spherical相机 Spherical是什么相机
   return isPinhole(eintrinsic) || isSpherical(eintrinsic);
 }
 
