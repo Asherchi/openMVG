@@ -41,7 +41,6 @@ using namespace openMVG::image;
 using namespace openMVG::features;
 using namespace openMVG::sfm;
 
-// 这个是干什么用的？
 features::EDESCRIBER_PRESET stringToEnum(const std::string & sPreset)
 {
   features::EDESCRIBER_PRESET preset;
@@ -66,10 +65,10 @@ int main(int argc, char **argv)
 
   std::string sSfM_Data_Filename;
   std::string sOutDir = "";
-  bool bUpRight = false;  // 这个是什么 有什么用的？ 这个默认为FALSE是计算描述子的方向
-  std::string sImage_Describer_Method = "SIFT";  // 有很多其他的提取描述子的方法
-  bool bForce = false;  //  是否读原来以及存在的文件 false的话 是读取  true 不读取 直接计算 
-  std::string sFeaturePreset = "";  // 这个暂时看不懂
+  bool bUpRight = false;
+  std::string sImage_Describer_Method = "SIFT";
+  bool bForce = false;
+  std::string sFeaturePreset = "";
 #ifdef OPENMVG_USE_OPENMP
   int iNumThreads = 0;
 #endif
@@ -79,8 +78,8 @@ int main(int argc, char **argv)
   cmd.add( make_option('o', sOutDir, "outdir") );
   // Optional
   cmd.add( make_option('m', sImage_Describer_Method, "describerMethod") );
-  cmd.add( make_option('u', bUpRight, "upright") );  
-  cmd.add( make_option('f', bForce, "force") );  
+  cmd.add( make_option('u', bUpRight, "upright") );
+  cmd.add( make_option('f', bForce, "force") );
   cmd.add( make_option('p', sFeaturePreset, "describerPreset") );
 
 #ifdef OPENMVG_USE_OPENMP
