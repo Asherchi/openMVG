@@ -191,7 +191,7 @@ public:
 
         double angles [4] = {0.0, 0.0, 0.0, 0.0};
         int nangles = 1; // by default (1 upright feature)
-        if (_bOrientation)
+        if (_bOrientation)  // 如果为真的话 计算描述子的朝向
         { // compute from 1 to 4 orientations
           nangles = vl_sift_calc_keypoint_orientations(filt, angles, keys+i);
         }
@@ -229,7 +229,7 @@ public:
 
 private:
   Params _params;
-  bool _bOrientation;
+  bool _bOrientation;  // 这个方向是什么的方向？
 };
 
 } // namespace features
