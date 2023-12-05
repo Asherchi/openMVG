@@ -219,7 +219,7 @@ bool Bundle_Adjustment_Ceres::Adjust
             pos = sim(pos);
           }
           Vec residual = (Eigen::Map<Mat3X>(X_SfM[0].data(), 3, X_SfM.size()) - Eigen::Map<Mat3X>(X_GPS[0].data(), 3, X_GPS.size())).colwise().norm();
-          std::sort(residual.data(), residual.data() + residual.size());
+          std::sort(residual.data(), residual.data() + residual.size());  // data返回的是一个指针？
           pose_center_robust_fitting_error = residual(residual.size()/2);  // 这个误差等于所有误差的中位数 
 
           // Apply the found transformation to the SfM Data Scene

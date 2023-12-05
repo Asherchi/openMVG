@@ -100,4 +100,4 @@ openMVG_main_SfM
 -r // resection的方法 前方交会的方法
 -c // 相机模型
 
-还有一些：自己看吧
+
